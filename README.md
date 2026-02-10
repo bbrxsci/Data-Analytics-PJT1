@@ -8,7 +8,7 @@
 
 ## 2. Team Information
 
-**Team Name:** Anaheim
+**Team Name:** Systemic Solutions INC
 
 | Name    | Student ID | Group | Role            | Phone Number      |
 | ------- | ---------- | ----- | --------------- | ----------------- |
