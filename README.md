@@ -8,7 +8,7 @@
 
 ## 2. Team Information
 
-**Team Name:** Systemic Solutions INC
+**Team Name:** Prime Logic Inc.
 
 | Name    | Student ID | Group | Role            | Phone Number      |
 | ------- | ---------- | ----- | --------------- | ----------------- |
