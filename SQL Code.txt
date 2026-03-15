@@ -1,0 +1,125 @@
+-- =========================================
+-- CREATE DATABASE
+-- =========================================
+
+CREATE DATABASE Prime_Logic;
+
+USE Prime_Logic;
+
+-- =========================================
+-- 1. INDEPENDENT TABLES
+-- =========================================
+
+CREATE TABLE Employee (
+    Employee_ID INT AUTO_INCREMENT PRIMARY KEY,
+    First_Name VARCHAR(50) NOT NULL,
+    Last_Name VARCHAR(50) NOT NULL,
+    Role ENUM('Cashier','Manager','Admin') NOT NULL,
+    Passcode_Hash VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE Customer (
+    Customer_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Phone_Number VARCHAR(15) UNIQUE,
+    Discount_Tier DECIMAL(3,2) NOT NULL,
+    Total_Spent DECIMAL(10,2) DEFAULT 0.00
+);
+
+CREATE TABLE Supplier (
+    Supplier_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Company_Name VARCHAR(100) NOT NULL,
+    Contact_Email VARCHAR(100) NOT NULL,
+    Lead_Time_Days INT NOT NULL CHECK (Lead_Time_Days >= 0)
+);
+
+CREATE TABLE Product (
+    Product_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Barcode VARCHAR(50) UNIQUE NOT NULL,
+    Product_Name VARCHAR(100) NOT NULL,
+    Base_Price DECIMAL(10,2) NOT NULL CHECK (Base_Price >= 0),
+    Current_Stock INT NOT NULL CHECK (Current_Stock >= 0),
+    Min_Threshold INT NOT NULL CHECK (Min_Threshold >= 0)
+);
+
+-- =========================================
+-- 2. DEPENDENT TABLES
+-- =========================================
+
+CREATE TABLE Sale (
+    Sale_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    Employee_ID INT NOT NULL,
+    Customer_ID INT,
+    Total_Amount DECIMAL(10,2) NOT NULL CHECK (Total_Amount >= 0),
+    Discount_Value DECIMAL(10,2) DEFAULT 0.00,
+
+    FOREIGN KEY (Employee_ID)
+        REFERENCES Employee(Employee_ID)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (Customer_ID)
+        REFERENCES Customer(Customer_ID)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+);
+
+CREATE TABLE Purchase_Order (
+    PO_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Created_At DATETIME DEFAULT CURRENT_TIMESTAMP,
+    Employee_ID INT NOT NULL,
+    Supplier_ID INT NOT NULL,
+    Status ENUM('Pending','Ordered','Received','Cancelled') NOT NULL,
+
+    FOREIGN KEY (Employee_ID)
+        REFERENCES Employee(Employee_ID)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (Supplier_ID)
+        REFERENCES Supplier(Supplier_ID)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+);
+
+-- =========================================
+-- 3. ASSOCIATIVE TABLES
+-- =========================================
+
+CREATE TABLE Sale_Item (
+    Sale_ID INT,
+    Product_ID INT,
+    Quantity INT NOT NULL CHECK (Quantity > 0),
+    Unit_Price DECIMAL(10,2) NOT NULL CHECK (Unit_Price >= 0),
+
+    PRIMARY KEY (Sale_ID, Product_ID),
+
+    FOREIGN KEY (Sale_ID)
+        REFERENCES Sale(Sale_ID)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (Product_ID)
+        REFERENCES Product(Product_ID)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+);
+
+CREATE TABLE Purchase_Order_Item (
+    PO_ID INT,
+    Product_ID INT,
+    Quantity_Req INT NOT NULL CHECK (Quantity_Req > 0),
+    Unit_Cost DECIMAL(10,2) NOT NULL CHECK (Unit_Cost >= 0),
+
+    PRIMARY KEY (PO_ID, Product_ID),
+
+    FOREIGN KEY (PO_ID)
+        REFERENCES Purchase_Order(PO_ID)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (Product_ID)
+        REFERENCES Product(Product_ID)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+);
