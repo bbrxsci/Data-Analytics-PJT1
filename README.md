@@ -1,7 +1,3 @@
-Here is your document converted into a **clean, professional `README.md` format for GitHub**. It follows common GitHub conventions (headers, tables, code blocks, sections, etc.).
-
-You can **copy this directly into a `README.md` file**.
-
 ---
 
 # 🛒 Supermarket POS System
