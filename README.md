@@ -1,5 +1,3 @@
----
-
 # 🛒 Supermarket POS System
 
 ## Course
